@@ -226,6 +226,35 @@
 
 ------
 
+
+
+# 使用场景
+
+## 1\. 查看端口占用
+
+| 命令                            | 作用                                                         | 延展阅读                                                    |
+| :------------------------------ | :----------------------------------------------------------- | :---------------------------------------------------------- |
+| `netstat -aon | findstr "8080"` | TCP     127.0.0.1:80         0.0.0.0:0               LISTENING       2448<br />端口“8080”被PID（进程号）为2448的进程占用。 | [参考](https://cloud.tencent.com/developer/article/1157090) |
+| `tasklist | findstr "2448"`     | notepad.exe                     2016 Console                 0     16,064 K<br />查看端口“8080”被哪个应用占用 |                                                             |
+
+## 2\. 关闭进程
+
+| 命令                                         | 作用                             | 延展阅读                                                    |
+| :------------------------------------------- | :------------------------------- | :---------------------------------------------------------- |
+| `taskkill /pid 2152`                         | 按进程号关闭进程                 | [参考](https://cloud.tencent.com/developer/article/1157090) |
+| `taskkill /pid 2152 /pid 1284`               | 关闭多个                         |                                                             |
+|                                              |                                  |                                                             |
+| `taskkill /im notepad.exe`                   | 按进程名关闭进程                 |                                                             |
+| `taskkill /im notepad.exe /im iexplorer.exe` | 关闭多个                         |                                                             |
+| `taskkill /im *.exe`                         | 如果是要关闭所有的,则使用通配符* |                                                             |
+|                                              |                                  |                                                             |
+|                                              |                                  |                                                             |
+| `taskkill /t /pid 2152`                      | 有提示的关闭进程                 |                                                             |
+| `taskkill /t /im notepad.exe`                |                                  |                                                             |
+|                                              |                                  |                                                             |
+| `taskkill /f /pid 2152`                      | 强行终止进程                     |                                                             |
+| `taskkill /f /im notepad.exe`                |                                  |                                                             |
+
 # 参考
 
 [Linux面试必备20个常用命令](https://blog.csdn.net/yuan2019035055/article/details/120584242)
