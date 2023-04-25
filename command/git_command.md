@@ -1,22 +1,22 @@
 # 1. git 仓库准备
 
-| 命令                                      | 作用          | 延展阅读 |
-| :---------------------------------------- | :------------ | :------- |
-| `git clone git@github.xxxxxx/testGit.git` | clone 仓库    |          |
-| `git init`                                | 初始化git仓库 |          |
+| 命令                                      | 作用            | 延展阅读 |
+| :---------------------------------------- | :-------------- | :------- |
+| `git clone git@github.xxxxxx/testGit.git` | clone 仓库      |          |
+| `git init`                                | 初始化 git 仓库 |          |
 
 # 2. 基础操作
 
-| **命令**                       | 作用                           | 延展阅读 |
-| :----------------------------- | :----------------------------- | :------- |
-| `git status`                   | 查看当前路径下所有文件的`状态` |          |
-| `git status test.txt`          | 查看`指定文件test.txt`的状态   |          |
-|                                |                                |          |
-| `git add test.txt`             | 添加文件 test.txt 到暂存区     |          |
-| `git add .`                    | 提交当前路径下所有文件到暂存区 |          |
-|                                |                                |          |
-| `git commit test.txt`          | 提交`指定文件test.txt`         |          |
-| `git commit -m "提交全部文件"` | 提交`全部文件`                 |          |
+| **命令**                       | 作用                             | 延展阅读 |
+| :----------------------------- | :------------------------------- | :------- |
+| `git status test.txt`          | 查看`指定`文件test.txt的状态     |          |
+| `git status`                   | 查看当前路径下`所有`文件的状态   |          |
+|                                |                                  |          |
+| `git add test.txt`             | 添加`指定`文件 test.txt 到暂存区 |          |
+| `git add .`                    | 提交当前路径下`所有`文件到暂存区 |          |
+|                                |                                  |          |
+| `git commit test.txt`          | 提交`指定`文件test.txt           |          |
+| `git commit -m "提交全部文件"` | 提交`全部`文件                   |          |
 
 # 3. 分支
 
@@ -24,31 +24,36 @@
 
 | 命令                    | 作用                                                         | 延展阅读 |
 | :---------------------- | :----------------------------------------------------------- | :------- |
-| `git branch test1`      | 基于当前分支新建分支test1，但不切换到test1<br />通过 `git branch` 命令创建的分支，只是对某个 `Commit-ID` 的「引用」 |          |
+| `git branch test1`      | 基于当前分支新建分支 test1，但不切换到 test1<br />通过 `git branch` 命令创建的分支，其实只是对某个 `Commit-ID` 的「`引用`」 |          |
 | `git checkout -b test2` | 基于当前分支新建分支test2，并切换到test2                     |          |
 
-## 3.2 创建临时分支
+### 场景1：查看 某个历史版本 的内容
 
 | 命令-------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git checkout e0c619ca3978a38f6eabe79c3dfc67d4296ccc36`<br />`git switch -c test4` | 新建临时分支`(HEAD detached at e0c619c)`<br />对临时分支创建个新分支`test4` |          |
-| `git checkout origin/main`<br />`git switch -c test4`        | 新建临时分支 `(HEAD detached at origin/main)`<br />对临时分支创建个新分支`test4` |          |
+| `git branch test2 125a1d15e3c`                               | 新建想要查看某个历史版本的源码<br />新建分支`test2`          |          |
+| `git checkout -b test3 fe5e47ec47`                           | 新建想要查看某个历史版本的源码<br />新建分支`test3`          |          |
+|                                                              |                                                              |          |
+| 1. `git checkout e0c619ca3978a`<br />2. `git switch -c test4` | 1. 新建临时分支`(HEAD detached at e0c619c)`<br />2. 如果想保留这个临时分支，可执行此命令来创建新分支`test4` |          |
+| 1. `git checkout origin/main`<br />2. `git switch -c test4`  | 1. 新建临时分支 `(HEAD detached at origin/main)`<br />2. 如果想保留这个临时分支，可执行此命令来创建新分支`test4` |          |
 
-### 场景1：想要查看某个历史版本的源码
-
-| 命令-------------------------------------------------------------------------------------------------------------------- | 作用                                                | 延展阅读 |
-| :----------------------------------------------------------- | :-------------------------------------------------- | :------- |
-| `git branch test2 125a1d15e3c07667a0185a636b53b902d2bf81cd`  | 新建想要查看某个历史版本的源码<br />新建分支`test2` |          |
-| `git checkout -b test3 fe5e47ec47e7c4fe300fa65dd7b37c29ddca2251` | 新建想要查看某个历史版本的源码<br />新建分支`test3` |          |
-
-## 3.3 `远程origin地址上的分支` `拉到本地` 并 `建立关联`
+### 场景2 `远程origin地址上的分支` `拉到本地` 并 `建立关联`
 
 | 命令                             | 作用                                                         | 延展阅读 |
 | :------------------------------- | :----------------------------------------------------------- | :------- |
 | `git checkout -t origin/dev`     | 拉取`origin/dev` 到本地并创建`dev`分支 (-t 即 --track)       |          |
 | `git checkout -b dev origin/dev` | 拉取`origin/dev` 到本地并创建`dev`分支<br />切换到`dev`分支上,接着跟**远程的`origin地址上的dev`分支关联起来** |          |
 
-## 3.4 查看分支
+## 3.2 删除分支
+
+| 命令----------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
+| `git branch -d test1`                                        | 删除分支`test1`；使用 `git branch -d` 删除某个本地分支，只是删除了这个`「引用」`而已，并不会删除任何 `Commit-ID`；但是，如果一个 `Commit-ID` 没有被任何一个分支引用的话，在一定时间之后，将会被 Git 回收机制删除； |          |
+| `git branch -d -f test2`                                     | 强制删除分支`test2`                                          |          |
+| `git branch -D test3`                                        | 强制删除分支`test2`                                          |          |
+| `git branch -d -r origin/test1`                              | 删除分支`origin/test1`                                       |          |
+
+## 3.3 查看分支
 
 | 命令             | 作用                                                | 延展阅读 |
 | :--------------- | :-------------------------------------------------- | :------- |
@@ -58,38 +63,25 @@
 | `git branch -v`  | 查看 `本地分支 + sha1 + commit subject`             |          |
 | `git branch -vv` | 查看 `本地分支 + sha1 + [远程分支] +commit subject` |          |
 
-## 3.5 远程分支重命名
+## 3.4 远程分支重命名
 
 | 命令-------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| 1. `git checkout old-name`<br />2. `git branch -m new-name`<br />3. `git push origin :old-name new-name` | *# check out the branch*<br />*# change local branch name*<br />*# push local new-name to remote old-name and change the remote branch name* | [链接](https://blog.csdn.net/cuma2369/article/details/107638884) |
+| 1. `git checkout old-name`<br />2. `git branch -m new-name`<br />3. `git push origin :old-name new-name` | 1. check out the branch*<br />*2. change local branch name*<br />*3. push local new-name to remote old-name and change the remote branch name | [链接](https://blog.csdn.net/cuma2369/article/details/107638884) |
 
-## 3.6 切换分支
+## 3.5 切换分支
 
 | 命令                  | 作用                         | 延展阅读 |
 | :-------------------- | :--------------------------- | :------- |
 | `git checkout master` | 从当前分支切换到`master`分支 |          |
 
-## 3.7 删除分支
-
-| 命令----------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git branch -d test1`                                        | 删除分支`test1`<br />使用 `git branch -d` 删除某个本地分支，只是删除了这个`「引用」`而已，并不会删除任何 `Commit-ID`；但是，如果一个 `Commit-ID` 没有被任何一个分支引用的话，在一定时间之后，将会被 Git 回收机制删除 |          |
-| `git branch -d -f test2`                                     | 强制删除分支`test2`                                          |          |
-| `git branch -D test3`                                        | 强制删除分支`test2`                                          |          |
-| `git branch -d -r origin/test1`                              | 删除分支`origin/test1`                                       |          |
-
-## 3.8 回退版本
+## 3.6 回退版本
 
 | 命令------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git reset --mixed c983d4f8da9a`<br />==<br />`git reset c983d4f8da9a` | 回退到`提交c983d4` ，并且将回退的代码全部放入到`工作区`中（文件变红） | [链接](https://blog.csdn.net/zts_zts/article/details/115220786) |
-| `git reset --soft c983d4f8da9a`                              | 回退到`提交c983d4` ，并且将回退的代码全部放入到`暂存区`中（文件变蓝） |                                                              |
-| `git reset --hard c983d4f8da9a`                              | 回退到`提交c983d4` ，清空`工作目录`及`暂存区`所有修改（修改内容被直接删除） |                                                              |
-|                                                              |                                                              |                                                              |
-| `git reset --hard c983d4f8da9a`<br />`git reset --hard ORIG_HEAD` | 回退到`提交c1a94144cef43d7a79518版本`<br />git reset、git merge、git rebase等危险操作失误时回退到`原来状态` |                                                              |
-| `git reset --hard HEAD^`                                     | 当前版本回退一个版本                                         |                                                              |
-| `git reset --hard HEAD^^`                                    | 当前版本回退二个版本                                         |                                                              |
+| `git reset --mixed c983d4f8da9a`<br />==<br />`git reset c983d4f8da9a` | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`工作区`中（文件变红） | [链接](https://blog.csdn.net/zts_zts/article/details/115220786) |
+| `git reset --soft c983d4f8da9a`                              | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`暂存区`中（文件变蓝） |                                                              |
+| `git reset --hard c983d4f8da9a`                              | 回退到`提交c983d4版本` ，清空`工作目录`及`暂存区`所有修改（修改内容被直接删除） |                                                              |
 
 ### 场景1：撤销工作区的修改（前提是没有增加到暂存区）
 
@@ -99,24 +91,27 @@
 
 ### 场景2：撤销暂存区的修改
 
-| 命令                                                     | 作用 | 延展阅读 |
-| :------------------------------------------------------- | :--- | :------- |
-| `git reset HEAD test.txt`  <br />`git checkout test.txt` |      |          |
+| 命令                                                         | 作用 | 延展阅读 |
+| :----------------------------------------------------------- | :--- | :------- |
+| 1. `git reset HEAD test.txt`  <br />2. `git checkout test.txt` |      |          |
 
 ### 场景3：后悔回退操作，恢复到原来的提交
 
-| 命令                                                         | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git reset --hard c983d4f8da9a`<br />`git reset --hard ORIG_HEAD` | 回退到`提交c1a941版本`<br />git reset、git merge、git rebase等危险操作失误时回退到`原来状态` |          |
+| 命令                            | 作用                                                         | 延展阅读 |
+| :------------------------------ | :----------------------------------------------------------- | :------- |
+| `git reset --hard c983d4f8da9a` | 回退到`提交c1a941版本`                                       |          |
+| `git reset --hard ORIG_HEAD`    | `git reset`、git merge、`git rebase`等危险操作失误时回退到`原来版本状态` |          |
+| `git reset --hard HEAD^`        | 当前版本回退一个版本                                         |          |
+| `git reset --hard HEAD^^`       | 当前版本回退二个版本                                         |          |
 
 # 4. Fetch
 
 | 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git fetch`                                                  | 拉取`「所有远程仓库」`所包含的分支到本地，并在本地创建或更新远程分支。所有分支最新的 `Commit-ID` 都会记录在 `.git/FETCH_HEAD` 文件中，若有多个分支，`FETCH_HEAD` 内会多行数据. |          |
-| 1. `git fetch origin`<br />2. `git merge`                    | 1. 拉取 `origin ` 对应远程仓库的`所有分支`到本地 `refs/remotes/origin/`目录下，`FETCH_HEAD` 设定同上；<br />2. 把 `refs/remotes/origin/` 目录下对应分支合并到 `refs/heads/` 目录下对应分支上. |          |
-| `git fetch origin main`                                      | 拉取 `origin ` 对应远程仓库的 `main` 分支到本地 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 main 分支最新的 `Commit-ID`. |          |
-| `git fetch origin main:temp`                                 | 拉取 `origin` 对应远程仓库的 `main` 分支到本地 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 记录了远程仓库 `main` 分支最新的 `Commit-ID`，并且基于远程仓库的 `main` 分支创建一个名为 `temp` 的新本地分支（但不会切换至新分支）. |          |
+| `git fetch`                                                  | 拉取 ☞ [`remote "origin"`] → `fetch = +refs/heads/*:refs/remotes/origin/*`<br />如果配置多个远程仓库，则拉取`「所有远程仓库」`下的`所有分支`到本地，并在本地`创建或更新`远程分支；所有分支最新的 `Commit-ID` 都会记录在 `.git/FETCH_HEAD` 文件中，若有多个分支`FETCH_HEAD` 内会有多行数据； |          |
+| 1. `git fetch origin`<br />2. `git merge`                    | 1. git 将`远程仓库`下的`所有分支`拉取到本地的 `refs/remotes/origin/` 目录下，`FETCH_HEAD` 设定同上；<br />2. 把 `refs/remotes/origin/` 目录下对应分支合并到 `refs/heads/` 目录下对应分支上; |          |
+| `git fetch origin main`                                      | git 将`远程仓库`下的 `main` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 `main` 分支最新的 `Commit-ID`. |          |
+| `git fetch origin main:temp`                                 | git 将`远程仓库`下的 `main` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 main 分支最新的 `Commit-ID`，并且基于远程仓库的 `main` 分支创建一个名为 `temp` 的新本地分支（但不会切换至新分支）. |          |
 
 # 5. Rebase
 
@@ -134,8 +129,8 @@
 
 | 命令------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git pull` <br />`==`<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 拉取`「所有远程仓库」`所包含的分支到本地，然后把`本地分支`对应的`远程分支` `merge` 到`本地分支` |          |
-| `git pull origin master`<br />`==`<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD` | 拉取 `origin ` 对应远程仓库的 `master` 分支到本地，然后把`本地main分支`对应的`远程main分支` `merge` 到`本地main分支` |          |
+| `git pull` <br />`==`<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 1. 拉取`「所有远程仓库」`下的`所有分支`到本地，并在本地`创建或更新`远程分支；所有分支最新的 `Commit-ID` 都会记录在 `.git/FETCH_HEAD` 文件中，若有多个分支`FETCH_HEAD` 内会有多行数据；<br />2. 把`本地分支`对应的`远程分支` `merge` 到`本地分支`； |          |
+| `git pull origin master`<br />`==`<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD` | 1. git 将`远程仓库`下的 `master` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 `master` 分支最新的 `Commit-ID`.<br />2. 把`本地main分支`对应的`远程main分支` `merge` 到`本地main分支` |          |
 
 # 8. Cherry-pick
 
@@ -143,22 +138,22 @@
 
 | 命令--------------------------------------------------------------- | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git cherry-pick 125a1d15e3c07`                              | 将指定提交`commitHash`应用于`当前分支`. 在`当前分支`会`产生一个新的提交`. | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
+| `git cherry-pick 125a1d`                                     | 将提交`125a1d`应用于`当前分支`. 在`当前分支`会`产生一个新的提交`. | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 | `git cherry-pick branchDev`                                  | 将分支`branchDev`应用于当前分支. 在`当前分支`会`产生一个新的提交`. |                                                              |
 
-## 8.2 Cherry-pick多个提交
+## 8.2 cherry-pick多个提交
 
 | 命令--------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git cherry-pick HashA HashB`                                | Cherry pick 支持一次`转移多个提交`                           |          |
+| `git cherry-pick HashA HashB`                                | cherry pick 支持一次`转移多个提交`                           |          |
 | `git cherry-pick A..B`                                       | 转移一系列的`连续提交（不包含A）`，提交 A 必须早于提交 B，否则命令将失败，但不会报错 |          |
 | `git cherry-pick A^..B`                                      | 转移一系列的`连续提交（包含A）`                              |          |
 
-### 场景1：提交`f`应用到`master`分支
+### 场景1：提交`125a1d`应用到`master`分支
 
-| 命令                                                  | 作用                                           | 延展阅读                                                     |
-| :---------------------------------------------------- | :--------------------------------------------- | :----------------------------------------------------------- |
-| 1. `git checkout master` <br />2. `git cherry-pick f` | 1. 切换到 master 分支<br />2. Cherry pick 操作 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
+| 命令                                                       | 作用                                           | 延展阅读                                                     |
+| :--------------------------------------------------------- | :--------------------------------------------- | :----------------------------------------------------------- |
+| 1. `git checkout master` <br />2. `git cherry-pick 125a1d` | 1. 切换到 master 分支<br />2. cherry pick 操作 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 
 ## 8.3 Cherry-pick配置项
 
@@ -168,16 +163,14 @@
 | `git cherry-pick 125a1d15e -n`                               | **`-n`，`--no-commit`**<br />只更新工作区和暂存区，不产生新的提交。 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 | `git cherry-pick 125a1d15e -x`                               | 在提交信息的末尾追加一行`(cherry picked from commit ...)`，方便以后查到这个提交是如何产生的。 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 | `git cherry-pick 125a1d15e -s`                               | **`-s`，`--signoff`**<br />在提交信息的末尾追加一行操作者的签名，表示是谁进行了这个操作。 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
-| `git cherry-pick -m 1 125a1d15e`                             | **`-m parent-number`，`--mainline parent-number`**<br />如果原始提交是一个合并节点，来自于两个分支的合并，那么 Cherry pick 默认将失败，因为它不知道应该采用哪个分支的代码变动。`-m`配置项告诉 Git，应该采用哪个分支的变动。它的参数`parent-number`是一个从`1`开始的整数，代表原始提交的父分支编号。<br />左边命令表示，Cherry pick 采用提交`commitHash`来自编号`1`的父分支的变动。一般来说，`1`号父分支是`接受变动的分支`（the branch being merged into），`2`号父分支是作为`变动来源的分支`（the branch being merged from）。 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
+| `git cherry-pick -m 1 125a1d15e`                             | **`-m parent-number`，`--mainline parent-number`**<br />如果原始提交是一个`合并节点`，来自于两个分支的合并，那么 Cherry pick 默认将失败，因为它不知道应该采用哪个分支的代码变动。`-m`配置项告诉 Git，应该采用哪个分支的变动。它的参数`parent-number`是一个从`1`开始的整数，代表原始提交的父分支编号。<br />左边命令表示，Cherry pick 采用提交`commitHash`来自编号`1`的父分支的变动。一般来说，`1`号父分支是`接受变动的分支`（the branch being merged into），`2`号父分支是作为`变动来源的分支`（the branch being merged from）。 | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 
-## 8.4 Cherry-pick过程中代码冲突
-
-
+## 8.4 cherry-pick过程中代码冲突
 
 | 命令--------------------------------------------------------------------------------------------- | 作用                                                     | 延展阅读                                                     |
 | :----------------------------------------------------------- | :------------------------------------------------------- | :----------------------------------------------------------- |
-| Cherry pick操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作 |                                                          |                                                              |
-| 1. 用户解决代码冲突。<br />2. 将修改的文件重新加入暂存区（`git add .`）<br />3. `git cherry-pick --continue` （让 Cherry pick 过程继续执行） |                                                          | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
+| cherry pick操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作 |                                                          |                                                              |
+| 1. 用户解决代码冲突;<br />2. 将修改的文件重新加入暂存区（`git add .`）<br />3. `git cherry-pick --continue` （让 cherry pick 过程继续执行） |                                                          | [链接](https://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html) |
 | `git cherry-pick --abort`                                    | 发生代码冲突后，放弃合并，回到操作前的样子               |                                                              |
 | `git cherry-pick --quit`                                     | 发生代码冲突后，退出 Cherry pick，但是不回到操作前的样子 |                                                              |
 |                                                              |                                                          |                                                              |
@@ -192,27 +185,29 @@
 
 | 命令------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git push --set-upstream origin main`<br />`==`<br />`git push origin main` <br />`git branch --set-upstream-to=origin/main main`<br />`==`<br />`git push -u origin main` | 先把本地分支`push`到远程仓库`.git\refs\remotes\origin`中，然后再建立本地分支与远程分支的关联，即 `.git/config` 里会增加一条`[branch "main"]`关联关系； <br />`git push -u`是`git push --set-upstream`的缩写版本<br />第一次推送使用如上命令，以后 `git push` 就可以了 | [链接](https://blog.csdn.net/yzpbright/article/details/115574130) |
-| `git push origin release`                                    | 将`release`分支推向远程仓库`.git\refs\remotes\origin`中，在远程仓库`.git\refs\remotes\origin`中创建特定分支；但是`.git/config`里没有`[branch "release"]` 信息是因为还没有和远程仓库建立起联系<br />如果建立起联系以后执行`git push origin release`则将`所有本地的提交`都发送向`中心仓库` | [链接](https://www.jianshu.com/p/740b219c6546)               |
-| `git push`                                                   | 本地分支和远程仓库建立起联系以后，就可以用 `git push` 推送代码了. |                                                              |
+| `git push --set-upstream origin main`<br />`==`<br />1. `git push origin main` <br />2. `git branch --set-upstream-to=origin/main main`<br />`==`<br />`git push -u origin main` | 1. 先把本地分支`push`到远程仓库`.git\refs\remotes\origin`中；2. 建立本地分支与远程分支的关联，即 `.git/config` 里会增加一条`[branch "main"]`关联关系； <br />`git push -u`是`git push --set-upstream`的缩写版本；<br />仅第一次推送使用如上命令，以后 `git push` 就可以了； | [链接](https://blog.csdn.net/yzpbright/article/details/115574130) |
 |                                                              |                                                              |                                                              |
-| `git push origin --force`                                    | 强制进行                                                     |                                                              |
+| `git push`                                                   | `本地分支`和`远程分支`建立起联系以后，就可以用 `git push` 推送代码了； |                                                              |
+| `git push origin release`                                    | 将`release`分支推向远程仓库`.git\refs\remotes\origin`中，在远程仓库`.git\refs\remotes\origin`中创建特定分支；但是`.git/config`里没有`[branch "release"]` 信息是因为还没有和远程仓库建立起联系<br />如果建立起联系以后执行`git push origin release`则将`所有本地的提交`都发送向`中心仓库` | [链接](https://www.jianshu.com/p/740b219c6546)               |
+| `git push origin release `<br />`git push` 区别              | 1. 当只关联一个远程，只有一个分支时，这两个命令没什么**区别**。 2. 2. 当你关联了两个多个仓库、有多个分支时，`git push`可能会报错，因为它不知道要上传代码到哪里去； 而`git push origin master`指定仓库和分支，就不会报错。 |                                                              |
+|                                                              |                                                              |                                                              |
+| `git push origin --force`                                    | 强制推送                                                     |                                                              |
 | `git push origin --all`                                      | 将本地`所有分支`都推送给`特定的远程仓库`.                    |                                                              |
 | `git push origin --tags`                                     | 当使用`--all`选项推送所有本地分支时，`tags`并不会被自动推送到远程仓库。因此使用`--tags`选项来向远程仓库推送所有`本地tags`. |                                                              |
 
-### 场景1：一套向中心仓库发布本地仓库变更的标准流程
+### 场景1：一套向 中心仓库 发布 本地仓库变更 的标准流程
 
 | 命令------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                       |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| 1. `git checkout main` <br />2. `git fetch origin main` <br />3. `git rebase -i origin/main` <br />4. # Squash commits, fix up commit messages etc. <br />5. `git push origin main` | 1. 切到本地`main`分支;<br />2. 通过`git fetch`同步`中心仓库main分支`在本地的副本，以确保本地副本是最新的;<br />3. 通过`git rebase`操作将分支的修改`变基`到`远程main分支`的`提交历史之上`;（`-i` 表可交互的`rebase`操作，同时也是在分享给其他团队成员之前，清理本地commit记录的好机会）<br />4. `git push`命令将`所有本地的提交`都发送向`中心仓库`；（由于已确保本地的main分支是最新版本的，因此`push`操作是能够快速前进的。此时git不会阻止push操作） | [链接](https://www.jianshu.com/p/740b219c6546) |
+| 1. `git checkout main` <br />2. `git fetch origin main` <br />3. `git rebase -i origin/main` <br />4. # Squash commits, fix up commit messages etc. <br />5. `git push origin main` | 1. 切到本地`main`分支;<br />2. 通过`git fetch`同步`中心仓库main分支`在本地的副本，以确保本地副本是最新的;<br />3. 通过`git rebase`操作将分支的修改`变基`到`远程main分支`的`提交历史之上`;（`-i` 表可交互的`rebase`操作，同时也是在分享给其他团队成员之前，清理本地commit记录的好机会）<br />4. `git push`命令将`所有本地的提交`都发送向`中心仓库`；（由于已确保本地的`main`分支是最新版本的，因此`push`操作是能够快速前进的。此时git不会阻止`push`操作） | [链接](https://www.jianshu.com/p/740b219c6546) |
 
-### 场景2：--amend 更新上一次提交
+### 场景2：--amend  提交
 
 | 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                       |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| 1. # make changes to a repo and git add <br />2. `git commit --amend` <br />3. # update the existing commit message <br />4. `git push --force origin main` | 这样的提交通常会`修正并更新commit message`，`或者增加新的修改`。一旦一次commit被修正之后，`git push`会**直接失败**，因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 | [链接](https://www.jianshu.com/p/740b219c6546) |
+| 1. # make changes to a repo and git add <br />2. `git commit --amend` <br />3. # update the existing commit message <br />4. `git push --force origin main` | 这样的提交通常会`修正并更新commit message`，`或者增加新的修改`。一旦一次commit被修正之后，`git push`会 **直接失败**，因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 | [链接](https://www.jianshu.com/p/740b219c6546) |
 
-### 场景3：删除一个远程分支或者tag
+### 场景3：删除一个 远程分支 或者 tag
 
 | 命令--------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                       |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
@@ -237,8 +232,6 @@
 | `git log --graph --oneline`                  | --oneline标记将每个commit压缩成一行 |          |
 | `git log --graph --decorate --all`           |                                     |          |
 | `git log --graph --decorate --oneline --all` |                                     |          |
-
----
 
 # 11. Tag
 
@@ -319,7 +312,7 @@
 |                                            |                                  |                                                              |
 | `clear`                                    | 清屏                             |                                                              |
 
-# 14 git config
+# 14.. git config
 
 ## 14.1 查看 config
 
