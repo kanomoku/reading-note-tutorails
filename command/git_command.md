@@ -125,6 +125,13 @@
 | :-------------------------- | :--------------------------------- | :------- |
 | `git rebase origin/release` | 以`origin/release`的代码为基础变基 |          |
 
+## 场景1. A提PR ☞ B合入PR到release ☞ C revert PR ☞ A 在提PR的 fix-bug分支 rebase  release ☞ rebase后修改内容没了，如何再重提这个PR呢？
+
+| 命令                                                         | 作用                                                         | 延展阅读 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
+| 因为git认为变化过程是`原来内容→追加内容→删除内容`，此时`rebase`时，删除动作视为最新提交所以会把本地修改给清除，如何再重提这个PR呢？ |                                                              |          |
+| 1. git reflog<br />2. git fetch<br />3. git reset --hard origin/release<br />4. `git cherry-pick 542a43`<br />5. `git branch -vv`<br />6. `git push origin HEAD:fix-bug -f` | 1. 找到A提PR的那个提交`542a43`，为了把代码找回来<br />2. 拉取最新代码<br />3. 本地使用远程release分支代码<br />4. 把`542a43`内容cherry-pick 过来<br />5. 为了查看远程分支的名字`fix-bug`<br />6. 把本地分支强推到远程的`fix-bug`上 |          |
+
 # 6. Merge
 
 | 命令            | 作用                                                         | 延展阅读 |
@@ -361,7 +368,7 @@
 |                                            |                                  |                                                              |
 | `clear`                                    | 清屏                             |                                                              |
 
-# 14.. git config
+# 14. config
 
 ## 14.1 查看 config
 
@@ -399,3 +406,18 @@
 | `git config --global push.default simple`                    | 不带任何参数的git push， 默认只推送当前分支，这叫做simple方式 |          |
 | `git config --global push.default matching`                  | 还有一种叫做matching方式，会推送所有有对应的远程分支的本地分支 |          |
 
+# 15. 命令集
+
+## 场景1. 构造1个文件的10个commit
+
+| **命令**                                                     | 作用 | 延展阅读 |
+| :----------------------------------------------------------- | :--- | :------- |
+| `for i in {1..10}; do date >> 66.txt && git add . && git commit -sm "update"; done` |      |          |
+|                                                              |      |          |
+
+## 场景2. 构造10个文件
+
+| **命令**                                           | 作用 | 延展阅读 |
+| :------------------------------------------------- | :--- | :------- |
+| `for i in {1..10}; do date >> "file_$i.log"; done` |      |          |
+|                                                    |      |          |
