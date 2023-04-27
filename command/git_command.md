@@ -2,8 +2,8 @@
 
 | 命令                                      | 作用            | 延展阅读 |
 | :---------------------------------------- | :-------------- | :------- |
-| `git clone git@github.xxxxxx/testGit.git` | clone 仓库      |          |
-| `git init`                                | 初始化 git 仓库 |          |
+| `git clone git@github.xxxxxx/testGit.git` | clone 仓库      | 自证     |
+| `git init`                                | 初始化 git 仓库 | 自证     |
 
 # 2. 基础操作
 
@@ -13,132 +13,146 @@
 | `git status`                   | 查看当前路径下`所有`文件的状态   |          |
 |                                |                                  |          |
 | `git add test.txt`             | 添加`指定`文件 test.txt 到暂存区 |          |
-| `git add .`                    | 提交当前路径下`所有`文件到暂存区 |          |
+| `git add .`                    | 提交当前路径下`所有`文件到暂存区 | 自证     |
 |                                |                                  |          |
 | `git commit test.txt`          | 提交`指定`文件test.txt           |          |
-| `git commit -m "提交全部文件"` | 提交`全部`文件                   |          |
+| `git commit -m "提交全部文件"` | 提交`全部`文件                   | 自证     |
 
 # 3. 分支
 
 ## 3.1 创建分支
 
-| 命令                    | 作用                                                         | 延展阅读 |
-| :---------------------- | :----------------------------------------------------------- | :------- |
-| `git branch test1`      | 基于当前分支新建分支 test1，但不切换到 test1<br />通过 `git branch` 命令创建的分支，其实只是对某个 `Commit-ID` 的「`引用`」 |          |
-| `git checkout -b test2` | 基于当前分支新建分支test2，并切换到test2                     |          |
+### 场景1：单纯拉取新分支 ☞ 新需求 or BugFix → 提PR
 
-### 场景1：查看 某个历史版本 的内容
+| 命令                              | 作用                                                         | 延展阅读        |
+| :-------------------------------- | :----------------------------------------------------------- | :-------------- |
+| `git branch test1`                | 1. 基于当前分支新建分支 `test1`(但不会切换到`test1`分支)<br />2. `a branch named 'test1' already exists`<br />3. 没有关联的远程分支，故此分支依旧不可以直接执行`git push` | 自证            |
+| `git checkout -b test2`           | 1. 基于当前分支新建分支`test2`，并切换到`test2`<br />2. `a branch named 'test2' already exists`<br />3. 没有关联的远程分支，故此分支依旧不可以直接执行`git push` | 自证<br />☆☆☆☆☆ |
+|                                   |                                                              |                 |
+| `git branch test2 125a1d15e`      | 1. 基于某个提交新建分支 `test2`(但不会切换到`test2`分支)<br />2. `a branch named 'test2' already exists`<br />3. 没有关联的远程分支，故此分支依旧不可以直接执行`git push` | 自证            |
+| `git checkout -b test2 125a1d15e` | 1. 基于某个提交新建分支 `test2`，并切换到`test2`<br />2. `a branch named 'test2' already exists`<br />3. 没有关联的远程分支，故此分支依旧不可以直接执行`git push` | 自证            |
+|                                   |                                                              |                 |
+| `git fetch origin release:dev`    | 参考下文 `fetch` 详解                                        |                 |
+|                                   |                                                              |                 |
 
-| 命令-------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
+### 场景2：临时查看 某个提交 的内容
+
+| 命令------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git branch test2 125a1d15e3c`                               | 新建想要查看某个历史版本的源码<br />新建分支`test2`          |          |
-| `git checkout -b test3 fe5e47ec47`                           | 新建想要查看某个历史版本的源码<br />新建分支`test3`          |          |
-|                                                              |                                                              |          |
-| 1. `git checkout e0c619ca3978a`<br />2. `git switch -c test4` | 1. 新建临时分支`(HEAD detached at e0c619c)`<br />2. 如果想保留这个临时分支，可执行此命令来创建新分支`test4` |          |
-| 1. `git checkout origin/main`<br />2. `git switch -c test4`  | 1. 新建临时分支 `(HEAD detached at origin/main)`<br />2. 如果想保留这个临时分支，可执行此命令来创建新分支`test4` |          |
+| 1. `git checkout 125a1d15e`<br />2. `git switch -c test4`    | 1. 新建临时分支`(HEAD detached at e0c619c)`<br />2. 如果想保留这个临时分支，可执行此命令来创建新分支`test4`<br />3. `a branch named 'test4' already exists`<br />4. 没有关联的远程分支，故此分支依旧不可以直接执行`git push` | 自证     |
+| 1. `git checkout origin/main`<br />2. `git switch -c test4`  | 如上                                                         | 自证     |
 
-### 场景2 `远程origin地址上的分支` `拉到本地` 并 `建立关联`
+### 场景3：`远程分支`   `拉到本地` 并 `建立关联`：☞  想直接操作这个分支，不拉新分支提PR，直接操作这个分支
 
-| 命令                             | 作用                                                         | 延展阅读 |
-| :------------------------------- | :----------------------------------------------------------- | :------- |
-| `git checkout -t origin/dev`     | 拉取`origin/dev` 到本地并创建`dev`分支 (-t 即 --track)       |          |
-| `git checkout -b dev origin/dev` | 拉取`origin/dev` 到本地并创建`dev`分支<br />切换到`dev`分支上,接着跟**远程的`origin地址上的dev`分支关联起来** |          |
+| 命令                                                         | 作用                                                         | 延展阅读        |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :-------------- |
+| `git checkout -t origin/release`                             | (-t 即 --track)<br />1. 拉取`origin/release` 到本地并创建`release`分支<br />2. `git push` 直接提交 | 自证            |
+|                                                              |                                                              |                 |
+| `git checkout -b release origin/release`                     | 拉取`origin/release` 到本地并创建`release`分支<br />2. `git push` 直接提交 | 自证<br />☆☆☆☆☆ |
+| `git checkout -b test23 origin/release`<br />`git push origin HEAD:release` | 1. 拉取`origin/release` 到本地并创建`test23`分支<br />2. `git push` 因为名字不匹配，故报错<br />3.  通过`git push origin HEAD:release` 提交代码 | 自证            |
+|                                                              |                                                              |                 |
+| 1. 远程仓库有`test6`分支，本地没有<br />2. `git checkout test6` | 参考下文 分支切换 详解                                       | 自证            |
 
 ## 3.2 删除分支
 
+### 场景1：删除本地分支  or 标签
+
 | 命令----------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git branch -d test1`                                        | 删除分支`test1`；使用 `git branch -d` 删除某个本地分支，只是删除了这个`「引用」`而已，并不会删除任何 `Commit-ID`；但是，如果一个 `Commit-ID` 没有被任何一个分支引用的话，在一定时间之后，将会被 Git 回收机制删除； |          |
-| `git branch -d -f test2`                                     | 强制删除分支`test2`                                          |          |
-| `git branch -D test3`                                        | 强制删除分支`test2`                                          |          |
-| `git branch -d -r origin/test1`                              | 删除分支`origin/test1`                                       |          |
+| `git branch -d test1`                                        | 只是删除了这个`「引用」`而已，并不会删除任何 `Commit-ID`；但是，如果一个 `Commit-ID` 没有被任何一个分支引用的话，在一定时间之后，将会被 Git 回收机制删除； | 自证     |
+| `git branch -d -f test2`                                     | 强制删除分支`test2`                                          | 自证     |
+| `git branch -D test3`                                        | 强制删除分支`test2`                                          | 自证     |
 
-### 场景1：删除一个 远程分支 或者 tag
+### 场景2：删除远程分支 or 标签
 
-| 命令--------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                       |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| `git branch -D test3` <br />`git push origin :test3`         | 有时为了清理仓库或者更好的组织分支结构，需要`对分支进行删除`操作。要想完全删除一个分支，不仅要在`本地删除`，还要在`远程同步删除`。例子里的命令首先删除了名为`test3`的本地分支，然后使用`git push`将这次删除同步给远程仓库。注意这一`push`操作中，会在分支名称前加一个 ：前缀，以便通知远程仓库删除`远端的与本地同名的分支` | [链接](https://www.jianshu.com/p/740b219c6546) |
+| 命令----------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读        |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :-------------- |
+| 1. `git branch -d -r origin/test1`<br />2. `git push origin :test1` | 1. 删除远程分支在本地的副本`.git\refs\remotes\origin/test1`<br />2. 删除远程分支`test1`。注意这一`push`操作中，会在分支名称前加一个 ：前缀，以便通知远程仓库删除`远端的与本地同名的分支` | 自证            |
+| `git push origin --delete test33`                            | 删除远程分支`test33`                                         | 自证<br />☆☆☆☆☆ |
 
 ## 3.3 查看分支
 
-| 命令             | 作用                                                | 延展阅读 |
-| :--------------- | :-------------------------------------------------- | :------- |
-| `git branch`     | 查看本地所有分支                                    |          |
-| `git branch -r`  | 查看所有远程分支（`-r 是 --remotes 的简写`）        |          |
-| `git branch -a`  | 查看所有本地分支和远程分支（`-a 是 --all 的简写`）  |          |
-| `git branch -v`  | 查看 `本地分支 + sha1 + commit subject`             |          |
-| `git branch -vv` | 查看 `本地分支 + sha1 + [远程分支] +commit subject` |          |
+| 命令             | 作用                                                         | 延展阅读 |
+| :--------------- | :----------------------------------------------------------- | :------- |
+| `git branch`     | 查看`所有本地分支`                                           | 自证     |
+| `git branch -r`  | （`-r 是 --remotes 的简写`）<br />查看`所有远程分支`         | 自证     |
+| `git branch -a`  | （`-a 是 --all 的简写`）<br />查看`所有本地分支+所有远程分支` | 自证     |
+| `git branch -v`  | `test60 828852f Update 1.txt`                                | 自证     |
+| `git branch -vv` | `test6 62e5e7e [origin/test6] msg`                           | 自证     |
 
 ## 3.4 远程分支重命名
 
 | 命令-------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| 1. `git checkout old-name`<br />2. `git branch -m new-name`<br />3. `git push origin :old-name new-name` | 1. check out the branch*<br />*2. change local branch name*<br />*3. push local new-name to remote old-name and change the remote branch name | [链接](https://blog.csdn.net/cuma2369/article/details/107638884) |
+| 1. `git checkout old-name`<br />2. `git branch -m new-name`<br />3. `git push origin :old-name new-name` | 1. check out the branch*<br />*2. change local branch name*<br />*3. push local new-name to remote old-name and change the remote branch name | [链接](https://blog.csdn.net/cuma2369/article/details/107638884)<br />自证 |
 
 ## 3.5 切换分支
 
 | 命令                  | 作用                         | 延展阅读 |
 | :-------------------- | :--------------------------- | :------- |
-| `git checkout master` | 从当前分支切换到`master`分支 |          |
+| `git checkout master` | 从当前分支切换到`master`分支 | 自证     |
+
+## 场景1：远程仓库有test6分支，本地没有同名分支，本地`git checkout test6` 会自动拉取 远程分支test6 并创建同名本地分支
+
+| 命令------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
+| 1. 远程仓库有`test6`分支，本地没有<br />2. `git checkout test6` | 1. 自动拉取`远程分支test6` 并创建`同名本地分支`<br />2. `.git/config`配置文件里会追加关联关系 `[branch "test6"]`，此分支可以直接执行`git push` | 自证     |
+| 1. 远程仓库有`test6`分支，本地有`test6`，他们没有关联关系，恰巧重名时<br />2. `git checkout test6` | `git push` 会被拦截<br />具体如何提交参考 `push` 命令        |          |
+|                                                              |                                                              |          |
 
 ## 3.6 回退版本
 
 | 命令------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git reset --mixed c983d4f8da9a`<br />==<br />`git reset c983d4f8da9a` | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`工作区`中（文件变红） | [链接](https://blog.csdn.net/zts_zts/article/details/115220786) |
-| `git reset --soft c983d4f8da9a`                              | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`暂存区`中（文件变蓝） |                                                              |
-| `git reset --hard c983d4f8da9a`                              | 回退到`提交c983d4版本` ，清空`工作目录`及`暂存区`所有修改（修改内容被直接删除） |                                                              |
+| `git reset --mixed c983d4f8da9a`<br />`==`<br />`git reset c983d4f8da9a` | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`工作区`中（文件变红） | [链接](https://blog.csdn.net/zts_zts/article/details/115220786)<br />自证 |
+| `git reset --soft c983d4f8da9a`                              | 回退到`提交c983d4版本` ，并且将回退的代码全部放入到`暂存区`中（文件变蓝） | 自证                                                         |
+| `git reset --hard c983d4f8da9a`                              | 回退到`提交c983d4版本` ，清空`工作目录`及`暂存区`所有修改（修改内容被直接删除） | 自证                                                         |
+
+### 场景1：回退到指定提交
+
+| 命令                          | 作用                                                         | 延展阅读 |
+| :---------------------------- | :----------------------------------------------------------- | :------- |
+| `git reset --hard c983d4f8d`  | 回退到`提交c1a941版本`                                       | 自证     |
+| `git reset --hard ORIG_HEAD`  | `git reset`、git merge、`git rebase`等危险操作失误时回退到`原来版本状态` | 自证     |
+| `git reset --hard HEAD`       | 回退到当前分支最新提交                                       | 自证     |
+| `git reset --hard HEAD^`      | 回退到当前分支最新提交的上`1`个提交                          | 自证     |
+| `git reset --hard HEAD^^`     | 回退到当前分支最新提交的上`2`个提交                          | 自证     |
+| `git reset --hard HEAD^^^^^^` | 回退到当前分支最新提交的上`^个数`个提交                      | 自证     |
 
 ### 场景1：撤销工作区的修改（前提是没有增加到暂存区）
 
-| 命令                    | 作用 | 延展阅读 |
-| :---------------------- | :--- | :------- |
-| `git checkout test.txt` |      |          |
+| 命令                    | 作用         | 延展阅读 |
+| :---------------------- | :----------- | :------- |
+| `git checkout test.txt` | 撤销单个文件 | 自证     |
+| `git checkout .`        | 撤销全部文件 | 自证     |
+|                         |              |          |
 
 ### 场景2：撤销暂存区的修改
 
-| 命令                                                         | 作用 | 延展阅读 |
-| :----------------------------------------------------------- | :--- | :------- |
-| 1. `git reset HEAD test.txt`  <br />2. `git checkout test.txt` |      |          |
-
-### 场景3：后悔回退操作，恢复到原来的提交
-
-| 命令                            | 作用                                                         | 延展阅读 |
-| :------------------------------ | :----------------------------------------------------------- | :------- |
-| `git reset --hard c983d4f8da9a` | 回退到`提交c1a941版本`                                       |          |
-| `git reset --hard ORIG_HEAD`    | `git reset`、git merge、`git rebase`等危险操作失误时回退到`原来版本状态` |          |
-| `git reset --hard HEAD^`        | 当前版本回退一个版本                                         |          |
-| `git reset --hard HEAD^^`       | 当前版本回退二个版本                                         |          |
+| 命令                                                         | 作用                                               | 延展阅读 |
+| :----------------------------------------------------------- | :------------------------------------------------- | :------- |
+| 1. `git reset HEAD test.txt`  <br />2. `git checkout test.txt` | 1. 恢复指定文件到工作区<br />2. 撤销指定文件的修改 | 自证     |
+| 1. `git reset HEAD .`<br />2. `git checkout .`               | 1. 恢复全部文件到工作区<br />2. 撤销全部文件的修改 | 自证     |
+|                                                              |                                                    |          |
 
 # 4. Fetch
 
-| 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git fetch`                                                  | 拉取 ☞ [`remote "origin"`] → `fetch = +refs/heads/*:refs/remotes/origin/*`<br />如果配置多个远程仓库，则拉取`「所有远程仓库」`下的`所有分支`到本地，并在本地`创建或更新`远程分支；所有分支最新的 `Commit-ID` 都会记录在 `.git/FETCH_HEAD` 文件中，若有多个分支`FETCH_HEAD` 内会有多行数据； |          |
-| 1. `git fetch origin`<br />2. `git merge`                    | 1. git 将`远程仓库`下的`所有分支`拉取到本地的 `refs/remotes/origin/` 目录下，`FETCH_HEAD` 设定同上；<br />2. 把 `refs/remotes/origin/` 目录下对应分支合并到 `refs/heads/` 目录下对应分支上; |          |
-| `git fetch origin main`                                      | git 将`远程仓库`下的 `main` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 `main` 分支最新的 `Commit-ID`. |          |
-| `git fetch origin main:temp`                                 | git 将`远程仓库`下的 `main` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 main 分支最新的 `Commit-ID`，并且基于远程仓库的 `main` 分支创建一个名为 `temp` 的新本地分支（但不会切换至新分支）. |          |
+| 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                                     |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| `git fetch`                                                  | 1. 拉取「`远程仓库`」的`所有远程分支`的`最新Commit-ID` 记录在 `.git/FETCH_HEAD` 文件中，若有多个分支则 `FETCH_HEAD` 内会有多行数据，该`文件首行`对应的是 `git fetch` 时`所在分支`的`同名远程分支`。<br />2. 远程仓库被`clone`到本地后，被`push`过代码的分支会在`.git\refs\remotes\origin` 路径下`创建或更新`其在本地的副本 | 1. [参考1](https://blog.csdn.net/weixin_37646636/article/details/130412396)<br />2. [参考2](https://blog.csdn.net/weixin_37646636/article/details/130403890)<br />自证 |
+| `git fetch origin`                                           | 如上                                                         | 自证<br />☆☆☆☆☆                                              |
+| `git fetch origin release`                                   | 1. `FETCH_HEAD` 内会有`1`行数据，记录的是 `git fetch` 时`指定的远程分支`。<br />2. 远程仓库被`clone`到本地后，`远程release分支`被`push`过代码的话，其会在`.git\refs\remotes\origin` 路径下`创建或更新`其在本地的副本 | 自证<br />☆☆☆☆☆                                              |
+|                                                              |                                                              |                                                              |
+| `git fetch origin release:dev`                               | 1. 使用`远程release分支`在本地创建`本地dev分支`(但不会切换到该分支)。如果不存在`本地dev分支`，则会自动创建一个新的`本地dev分支`， 如果存在`本地dev分支`，并且是`fast forward`, 则`自动合并`两个分支，否则，会`阻止`以上操作。<br />2. 新分支和远程分支为衍生关系，故不存在关联。 |                                                              |
+| `git fetch origin :branch2`<br />`==`：<br />`git fetch origin master:branch2` | 此时 `master` 为远程仓库默认分支                             |                                                              |
 
-# 5. Rebase
-
-| 命令                        | 作用                               | 延展阅读 |
-| :-------------------------- | :--------------------------------- | :------- |
-| `git rebase origin/release` | 以`origin/release`的代码为基础变基 |          |
-
-## 场景1. A提PR ☞ B合入PR到release ☞ C revert PR ☞ A 在提PR的 fix-bug分支 rebase  release ☞ rebase后修改内容没了，如何再重提这个PR呢？
-
-| 命令                                                         | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| 因为git认为变化过程是`原来内容→追加内容→删除内容`，此时`rebase`时，删除动作视为最新提交所以会把本地修改给清除，如何再重提这个PR呢？ |                                                              |          |
-| 1. git reflog<br />2. git fetch<br />3. git reset --hard origin/release<br />4. `git cherry-pick 542a43`<br />5. `git branch -vv`<br />6. `git push origin HEAD:fix-bug -f` | 1. 找到A提PR的那个提交`542a43`，为了把代码找回来<br />2. 拉取最新代码<br />3. 本地使用远程release分支代码<br />4. 把`542a43`内容cherry-pick 过来<br />5. 为了查看远程分支的名字`fix-bug`<br />6. 把本地分支强推到远程的`fix-bug`上 |          |
-
-# 6. Merge
+# 5. Merge
 
 | 命令            | 作用                                                         | 延展阅读 |
 | :-------------- | :----------------------------------------------------------- | :------- |
-| `git merge dev` | `master`分支执行该命令，则把`dev`分支内容`merge`到`master`分支上 |          |
+| `git merge dev` | `master`分支执行该命令，则把`dev`分支内容`merge`到`master`分支上 | 自证     |
 
-## 场景1：远程仓库的`master`分支合并到本地的`release`分支
+## 场景1：远程仓库的`release`分支合并到本地的`dev`分支
 
 | 命令                                                         | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
@@ -183,6 +197,19 @@
 | :----------------------------------------------------------- | :--- | :----------------------------------------------------------- |
 | 1. `git fetch origin release v0118`<br />2. `git checkout -b release origin/release`<br />3. `git merge origin/v0118`<br />4. 解决冲突<br />5. `git push origin HEAD:v0118` |      | [参考](https://blog.csdn.net/u010312474/article/details/107915694) |
 |                                                              |      |                                                              |
+
+# 6. Rebase
+
+| 命令                        | 作用                               | 延展阅读 |
+| :-------------------------- | :--------------------------------- | :------- |
+| `git rebase origin/release` | 以`origin/release`的代码为基础变基 |          |
+
+## 场景1. A提PR ☞ B合入PR到release ☞ C revert PR ☞ A 在提PR的 fix-bug分支 rebase  release ☞ rebase后修改内容没了，如何再重提这个PR呢？
+
+| 命令                                                         | 作用                                                         | 延展阅读 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
+| 因为git认为变化过程是`原来内容→追加内容→删除内容`，此时`rebase`时，删除动作视为最新提交所以会把本地修改给清除，如何再重提这个PR呢？ |                                                              |          |
+| 1. `git reflog`<br />2. `git fetch`<br />3. `git reset --hard origin/release`<br />4. `git cherry-pick 542a43`<br />5. `git branch -vv`<br />6. `git push origin HEAD:fix-bug -f` | 1. 找到A提PR的那个提交`542a43`，为了把代码找回来<br />2. 拉取最新代码<br />3. 本地使用远程release分支代码<br />4. 把`542a43`内容cherry-pick 过来<br />5. 为了查看远程分支的名字`fix-bug`<br />6. 把本地分支强推到远程的`fix-bug`上 |          |
 
 # 7. Pull
 
@@ -244,13 +271,15 @@
 
 | 命令------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git push --set-upstream origin main`<br />`==`<br />1. `git push origin main` <br />2. `git branch --set-upstream-to=origin/main main`<br />`==`<br />`git push -u origin main` | 1. 先把本地分支`push`到远程仓库`.git\refs\remotes\origin`中；2. 建立本地分支与远程分支的关联，即 `.git/config` 里会增加一条`[branch "main"]`关联关系； <br />`git push -u`是`git push --set-upstream`的缩写版本；<br />仅第一次推送使用如上命令，以后 `git push` 就可以了； | [链接](https://blog.csdn.net/yzpbright/article/details/115574130) |
+| `git push --set-upstream origin release`<br /> ☞ `git push -u origin release` 为缩写版本<br /> | 1. `.git/config`配置文件会追加关联关系 `[branch "release"]`，故后续可以直接执行`git push`<br />2. `.git\refs\remotes\origin` 里会追加文件 `release` | [链接](https://blog.csdn.net/yzpbright/article/details/115574130)<br />自证 |
+| 1. `git push origin release` <br />2. `git branch --set-upstream-to=origin/release release`<br /> | 1. 第一步参考下文<br />2. `branch 'test4-new' set up to track 'origin/test4-new'。`  给配置文件`.git/config`追加关联关系 `[branch "release"]`，故后续可以直接执行`git push` | 自证                                                         |
 |                                                              |                                                              |                                                              |
-| `git push`                                                   | `本地分支`和`远程分支`建立起联系以后，就可以用 `git push` 推送代码了； |                                                              |
-| `git push origin release`                                    | 将`release`分支推向远程仓库`.git\refs\remotes\origin`中，在远程仓库`.git\refs\remotes\origin`中创建特定分支；但是`.git/config`里没有`[branch "release"]` 信息是因为还没有和远程仓库建立起联系<br />如果建立起联系以后执行`git push origin release`则将`所有本地的提交`都发送向`中心仓库` | [链接](https://www.jianshu.com/p/740b219c6546)               |
+| `git push`                                                   | `本地分支`和`远程分支`建立起联系后就可以用 `git push` 直接推送代码，关联关系体现在 ☞ `.git/config` 里有 `[branch "release"]` | 自整                                                         |
+|                                                              |                                                              |                                                              |
+| `git push origin release`                                    | 1. `本地release`和`远程release`满足`fast-forward`则可以合入<br />2. `本地release`和`远程release`不满足`fast-forward`则被报错拦截<br />3. `.git/config`配置文件未追加关联关系 `[branch "release"]`，故此分支依旧不可以直接执行`git push`<br />4. `.git\refs\remotes\origin` 里会追加文件 `release` | [链接](https://www.jianshu.com/p/740b219c6546)<br />自证     |
 | `git push origin release `<br />`git push` 区别              | 1. 当只关联一个远程，只有一个分支时，这两个命令没什么**区别**。 2. 2. 当你关联了两个多个仓库、有多个分支时，`git push`可能会报错，因为它不知道要上传代码到哪里去； 而`git push origin master`指定仓库和分支，就不会报错。 |                                                              |
 |                                                              |                                                              |                                                              |
-| `git push origin --force`                                    | 强制推送                                                     |                                                              |
+| `git push origin release --force`                            | 强制推送，内容起到置换效果，**慎用**                         | 自证                                                         |
 | `git push origin --all`                                      | 将本地`所有分支`都推送给`特定的远程仓库`.                    |                                                              |
 | `git push origin --tags`                                     | 当使用`--all`选项推送所有本地分支时，`tags`并不会被自动推送到远程仓库。因此使用`--tags`选项来向远程仓库推送所有`本地tags`. |                                                              |
 
@@ -264,10 +293,17 @@
 
 | 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                       |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| 1. # make changes to a repo and git add <br />2. `git commit --amend` <br />3. # update the existing commit message <br />4. `git push --force origin main` | 这样的提交通常会`修正并更新commit message`，`或者增加新的修改`。一旦一次commit被修正之后，`git push`会 **直接失败**，因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 | [链接](https://www.jianshu.com/p/740b219c6546) |
+| 1. make changes to a repo and git add <br />2. `git commit --amend` <br />3. update the existing commit message <br />4. `git push --force origin main` | 这样的提交通常会`修正并更新commit message`，`或者增加新的修改`。一旦一次commit被修正之后，`git push`会 **直接失败**，因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 | [链接](https://www.jianshu.com/p/740b219c6546) |
 |                                                              |                                                              |                                                |
-| 1. `git commit --amend`<br />2. `git push -f`                |                                                              |                                                |
+| 1. make changes to a repo and git add <br />2. `git commit --amend`<br />3. update the existing commit message <br />4. `git push -f` |                                                              | 自证                                           |
 |                                                              |                                                              |                                                |
+
+### 场景3：本地分支 和 远程分支 恰巧重名时 如何push?
+
+| 命令------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读 |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
+| 1. 本地新建`test4`分支，远程仓库没有重名分支<br /><br />2. `git checkout -b test4`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 代码会被成功 `push` 到远程仓库<br />2. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />3. `.git\refs\remotes\origin` 里会追加文件 `test4` | 自证     |
+| 1. 远程仓库有`test6`分支，本地有`test6`，他们没有关联关系，恰巧重名时<br />2. `git checkout test6`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 满足`fast-forward`则可以合入<br />2. 不满足`fast-forward`则被报错拦截<br />3. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />4. `.git\refs\remotes\origin` 里会追加文件 `test4` | 自证     |
 
 # 10. log
 
