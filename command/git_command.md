@@ -125,7 +125,6 @@
 | :---------------------- | :----------- | :------- |
 | `git checkout test.txt` | 撤销单个文件 | 自证     |
 | `git checkout .`        | 撤销全部文件 | 自证     |
-|                         |              |          |
 
 ### 场景2：撤销暂存区的修改
 
@@ -133,7 +132,6 @@
 | :----------------------------------------------------------- | :------------------------------------------------- | :------- |
 | 1. `git reset HEAD test.txt`  <br />2. `git checkout test.txt` | 1. 恢复指定文件到工作区<br />2. 撤销指定文件的修改 | 自证     |
 | 1. `git reset HEAD .`<br />2. `git checkout .`               | 1. 恢复全部文件到工作区<br />2. 撤销全部文件的修改 | 自证     |
-|                                                              |                                                    |          |
 
 # 4. Fetch
 
@@ -154,69 +152,82 @@
 
 ## 场景1：远程仓库的`release`分支合并到本地的`dev`分支
 
-| 命令                                                         | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| 方式1                                                        |                                                              |          |
-| 1. `git fetch origin master`<br />2. `git checkout release`<br />3. `git merge FETCH_HEAD` |                                                              |          |
-|                                                              |                                                              |          |
-| 方式2                                                        |                                                              |          |
-| 1. `git checkout master`<br />2. `git pull`<br />3. `git checkout release`<br />4. `git merge master` |                                                              |          |
-|                                                              |                                                              |          |
-| 方式3                                                        |                                                              |          |
-| 1. `git checkout release`<br />2. `git pull origin master`   | `git pull origin master`<br />相当于<br />1. `git fetch origin master`<br />2. `git merge origin/master` |          |
-|                                                              |                                                              |          |
-| 方式4                                                        |                                                              |          |
-| 1. `git fetch origin`<br />2. `git merge origin/master`      |                                                              |          |
-|                                                              |                                                              |          |
+| 命令                                                         | 作用                       | 延展阅读        |
+| :----------------------------------------------------------- | :------------------------- | :-------------- |
+| 方式1                                                        |                            |                 |
+| 1. `git checkout dev`<br />2. `git pull origin release`<br />`==`<br />1. `git checkout dev`<br />2. `git fetch origin release`<br />3. `git merge origin/release` |                            | 自证<br />☆☆☆☆☆ |
+|                                                              |                            |                 |
+| 方式2                                                        |                            |                 |
+| 1. `git checkout dev`<br />2. `git fetch origin`<br />3. `git merge origin/release` |                            | 自证<br />☆☆☆☆☆ |
+|                                                              |                            |                 |
+| 方式3                                                        |                            |                 |
+| 1. `git checkout release`<br />2. `git pull`<br />3. `git checkout dev`<br />4. `git merge release` |                            | 自证            |
+|                                                              |                            |                 |
+| 方式4                                                        |                            |                 |
+| 1. `git checkout dev`<br />2. `git fetch origin release`<br />3. `git merge FETCH_HEAD` |                            | 自证            |
+|                                                              |                            |                 |
+|                                                              |                            |                 |
+| 1. `git checkout dev`<br />2. `git fetch`<br />3. `git merge` | `origin/dev` ☞ `heads/dev` | 自证            |
+| 1. `git checkout dev`<br />2. `git pull`<br />               | `origin/dev` ☞ `heads/dev` | 自证            |
 
 ## 场景2：`git merge origin master`和`git merge origin/master`的区别
 
-| 命令-------------------------------------------------------------------------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读                                                     |
+| 命令                                                         | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| 1. `git fetch origin master` <br />2. `git merge origin branchB`<br />==<br />1. `git fetch origin master` <br />2. `git merge origin/master branchB` | 假设当前分支为`branchA`，又新建了一个分支`branchB`，通过手动修改，使得`远程master`和本地`branchB`分支的代码均与`当前分支`有差异，现在想把`远程master`分支代码和本地`branchB`分支代码`合并`到当前分支；<br />这里的`origin`指的是远程库，因为没写具体名字，所以指向默认分支`master`<br />实际是把`远程分支master`在`本地的副本`以及本地分支`master`合并到`当前分支`。 | [链接](https://blog.csdn.net/lansetudou/article/details/116841262) |
-|                                                              |                                                              |                                                              |
+| 1. `git checkout dev`<br />2. `git fetch origin master` <br />3. `git merge origin release`<br />==<br />1. `git checkout dev`<br />2. `git fetch origin master` <br />3. `git merge origin/master release` | `origin/master`  merge ☞ `heads/dev` （此时`master`为`origin`默认分支）<br />而且<br />`heads/release`  merge ☞ `heads/dev` | [链接](https://blog.csdn.net/lansetudou/article/details/116841262) |
 
-## 场景3：merge时发生冲突时撤销merge
+## 场景3：merge发生冲突时 ☞撤销merge
 
 | 命令------------------------------------------------------------------------------------------- | 作用      | 延展阅读 |
 | :----------------------------------------------------------- | :-------- | :------- |
-| 1. `git pull origin master`<br />2. 发生冲突<br />3. `git reset --hard HEAD` | 撤销merge |          |
-| 1. `git pull origin master`<br />2. 发生冲突<br />3. `git reset --hard 125a1d15e` | 撤销merge |          |
-| 1. `git pull origin master`<br />2. 发生冲突<br />3. `git merge --abort` | 撤销merge |          |
-|                                                              |           |          |
+| 1. `git checkout dev`<br />2. `git pull origin release`<br />3. 发生冲突<br />4. `git reset --hard HEAD` | 撤销merge | 自证     |
+| 1. `git checkout dev`<br />2. `git pull origin release`<br />3. 发生冲突<br />4. `git reset --hard 8ec554` | 撤销merge | 自证     |
+| 1. `git checkout dev`<br />2. `git pull origin master`<br />3. 发生冲突<br />4. `git merge --abort` | 撤销merge | 自证     |
 
-## 场景4：merge时发生冲突时解决冲突
+## 场景4：merge发生冲突时☞解决冲突
 
-| 命令------------------------------------------------------------------------------------------- | 作用     | 延展阅读 |
-| :----------------------------------------------------------- | :------- | :------- |
-| 1. `git checkout 6666`<br />2. `git fetch`<br />3. `git merge origin/5555`<br />4. 本地解决冲突<br />5. `git add`<br />6. `git commit -m "merge节点的commit信息"`<br />7. `git push` | 解决冲突 |          |
+| 命令------------------------------------------------------------------------------------------- | 作用                              | 延展阅读 |
+| :----------------------------------------------------------- | :-------------------------------- | :------- |
+| 1. `git checkout release`<br />2. `git pull origin release`<br />3. 本地解决冲突<br />4. `git add .`<br />5. `git commit -m "merge节点的commit信息"`<br />6. `git push` | 当前分支                          |          |
+| 1. `git checkout dev`<br />2. `git fetch`<br />3. `git merge origin/release`<br />4. 本地解决冲突<br />5. `git add .`<br />6. `git commit -m "merge节点的commit信息"`<br />7. `git push` | `source branch` ☞ `target branch` |          |
 
 ## 场景5：V0118分支 开发到一定阶段时，把 release分支 回合到  V0118分支
 
-| 命令                                                         | 作用 | 延展阅读                                                     |
-| :----------------------------------------------------------- | :--- | :----------------------------------------------------------- |
-| 1. `git fetch origin release v0118`<br />2. `git checkout -b release origin/release`<br />3. `git merge origin/v0118`<br />4. 解决冲突<br />5. `git push origin HEAD:v0118` |      | [参考](https://blog.csdn.net/u010312474/article/details/107915694) |
-|                                                              |      |                                                              |
+| 命令                                                         | 作用                   | 延展阅读                                                     |
+| :----------------------------------------------------------- | :--------------------- | :----------------------------------------------------------- |
+| 1. `git fetch`<br />2. `git checkout -b v0118 origin/release`<br />3. `date >> 1.txt && git add . && git commit -m "msg"` ☞ 模拟`v0118分支`提交业务代码<br /><br />期间`远程release分支`被合入诸多别的业务模块的代码提交<br /><br />`v0118分支`开发到一定阶段时，维护性的把`release分支`回合到 `v0118分支`<br /><br />1. `git fetch origin release v0118`<br />2. `git checkout -b release origin/release`<br />3. `git merge origin/v0118`<br />4. 解决冲突<br />5. `git push origin HEAD:v0118` | 此行为可保护好提交历史 | [参考](https://blog.csdn.net/u010312474/article/details/107915694)<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />超神推荐 |
 
 # 6. Rebase
 
 | 命令                        | 作用                               | 延展阅读 |
 | :-------------------------- | :--------------------------------- | :------- |
-| `git rebase origin/release` | 以`origin/release`的代码为基础变基 |          |
+| `git rebase origin/release` | 以`origin/release`的代码为基础变基 | 自证     |
 
-## 场景1. A提PR ☞ B合入PR到release ☞ C revert PR ☞ A 在提PR的 fix-bug分支 rebase  release ☞ rebase后修改内容没了，如何再重提这个PR呢？
+## 场景1：一次基于 rebase 的代码提交
+
+| 命令                                                         | 作用 | 延展阅读 |
+| :----------------------------------------------------------- | :--- | :------- |
+| 1. `git fetch`<br />2. `git checkout -b dev2 origin/dev2`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`  ☞ 模拟业务提交<br /><br />期间`远程release分支`被合入诸多别的业务模块的代码提交<br /><br />`dev2分支`往`release分支`提PR之前，先rebase一下<br /><br />1. `git fetch origin` ☞ 拉取最新代码<br />2. `git rebase origin/release` ☞ 执行rebase<br />3. `git push -u origin dev2` ☞ push 代码然后github提PR |      | 自证     |
+
+## 场景2：rebase发生冲突时 ☞ 撤销rebase
+
+| 命令                 | 作用       | 延展阅读 |
+| :------------------- | :--------- | :------- |
+| `git rebase --abort` | 撤销rebase | 自证     |
+
+## 场景3. A提PR ☞ B合入PR到release ☞ C revert PR ☞ A 在提PR的 fix-bug分支 rebase  origin/release ☞ rebase后修改内容没了，如何再重提这个PR呢？
 
 | 命令                                                         | 作用                                                         | 延展阅读 |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| 因为git认为变化过程是`原来内容→追加内容→删除内容`，此时`rebase`时，删除动作视为最新提交所以会把本地修改给清除，如何再重提这个PR呢？ |                                                              |          |
-| 1. `git reflog`<br />2. `git fetch`<br />3. `git reset --hard origin/release`<br />4. `git cherry-pick 542a43`<br />5. `git branch -vv`<br />6. `git push origin HEAD:fix-bug -f` | 1. 找到A提PR的那个提交`542a43`，为了把代码找回来<br />2. 拉取最新代码<br />3. 本地使用远程release分支代码<br />4. 把`542a43`内容cherry-pick 过来<br />5. 为了查看远程分支的名字`fix-bug`<br />6. 把本地分支强推到远程的`fix-bug`上 |          |
+| 因为git认为变化过程是`原来内容→追加内容→删除内容`，<br />此时`rebase`时，删除动作视为最新提交所以会把本地修改给清除，<br />如何再重提这个PR呢？ |                                                              |          |
+| 1. `git reflog`<br />2. `git fetch`<br />3. `git reset --hard origin/release`<br />4. `git cherry-pick 542a43`<br />5. `git branch -vv`<br />6. `git push origin HEAD:fix-bug -f` | 1. 找到A提PR的那个提交`542a43`，为了把代码找回来<br />2. 拉取最新代码<br />3. 本地使用`远程release分支`代码<br />4. 把`542a43`内容`cherry-pick`过来<br />5. 为了查看本地分支对应的远程分支的名字`fix-bug`<br />6. 把本地分支强推到远程的`fix-bug`上 | 自证     |
 
 # 7. Pull
 
-| 命令------------------------------------------------------------------------------------------- | 作用                                                         | 延展阅读 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- |
-| `git pull` <br />`==`<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 1. 拉取`「所有远程仓库」`下的`所有分支`到本地，并在本地`创建或更新`远程分支；所有分支最新的 `Commit-ID` 都会记录在 `.git/FETCH_HEAD` 文件中，若有多个分支`FETCH_HEAD` 内会有多行数据；<br />2. 把`本地分支`对应的`远程分支` `merge` 到`本地分支`； |          |
-| `git pull origin master`<br />`==`<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD` | 1. git 将`远程仓库`下的 `master` 分支拉取到本地的 `refs/remotes/origin/`目录下，且 `FETCH_HEAD` 只记录了一条数据，那就是远程仓库 `master` 分支最新的 `Commit-ID`.<br />2. 把`本地main分支`对应的`远程main分支` `merge` 到`本地main分支` |          |
+| 命令                                                         | 作用                                                 | 延展阅读                                                     |
+| :----------------------------------------------------------- | :--------------------------------------------------- | :----------------------------------------------------------- |
+| `git pull` <br />`==`<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 1. `fetch` origin的所有分支<br />2. `merge` 当前分支 | [参考](https://blog.csdn.net/weixin_37646636/article/details/129792724) |
+| `git pull origin master`<br />`==`<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD` | 1. `fetch` 当前分支<br />2. `merge` 当前分支         |                                                              |
 
 # 8. Cherry-pick
 
@@ -271,7 +282,7 @@
 
 | 命令------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | 作用                                                         | 延展阅读                                                     |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git push --set-upstream origin release`<br /> ☞ `git push -u origin release` 为缩写版本<br /> | 1. `.git/config`配置文件会追加关联关系 `[branch "release"]`，故后续可以直接执行`git push`<br />2. `.git\refs\remotes\origin` 里会追加文件 `release` | [链接](https://blog.csdn.net/yzpbright/article/details/115574130)<br />自证 |
+| `git push --set-upstream origin release`<br />`==`<br />`git push -u origin release` 为缩写版本<br /> | 1. `.git/config`配置文件会追加关联关系 `[branch "release"]`，故后续可以直接执行`git push`<br />2. `.git\refs\remotes\origin` 里会追加文件 `release` | [链接](https://blog.csdn.net/yzpbright/article/details/115574130)<br />自证 |
 | 1. `git push origin release` <br />2. `git branch --set-upstream-to=origin/release release`<br /> | 1. 第一步参考下文<br />2. `branch 'test4-new' set up to track 'origin/test4-new'。`  给配置文件`.git/config`追加关联关系 `[branch "release"]`，故后续可以直接执行`git push` | 自证                                                         |
 |                                                              |                                                              |                                                              |
 | `git push`                                                   | `本地分支`和`远程分支`建立起联系后就可以用 `git push` 直接推送代码，关联关系体现在 ☞ `.git/config` 里有 `[branch "release"]` | 自整                                                         |
@@ -448,12 +459,12 @@
 
 | **命令**                                                     | 作用 | 延展阅读 |
 | :----------------------------------------------------------- | :--- | :------- |
-| `for i in {1..10}; do date >> 66.txt && git add . && git commit -sm "update"; done` |      |          |
+| `for i in {1..10}; do date >> 66.txt && git add . && git commit -sm "update"; done` | 自证 |          |
 |                                                              |      |          |
 
 ## 场景2. 构造10个文件
 
 | **命令**                                           | 作用 | 延展阅读 |
 | :------------------------------------------------- | :--- | :------- |
-| `for i in {1..10}; do date >> "file_$i.log"; done` |      |          |
+| `for i in {1..10}; do date >> "file_$i.log"; done` | 自证 |          |
 |                                                    |      |          |
