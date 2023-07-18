@@ -229,10 +229,18 @@
 
 # **7. Pull**
 
-| **命令**                                                     | **作用**                                             | **延展阅读**                                                 |
-| :----------------------------------------------------------- | :--------------------------------------------------- | :----------------------------------------------------------- |
-| `git pull` <br />`==`<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 1. `fetch` origin的所有分支<br />2. `merge` 当前分支 | [参考](https://blog.csdn.net/weixin_37646636/article/details/129792724) |
-| **`git pull origin master`<br />`==`<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD`** | **1. `fetch` 当前分支<br />2. `merge` 当前分支**     |                                                              |
+| 1、将远程指定分支 拉取到 本地指定分支上：                    |                                                              |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| `git pull origin <远程分支名>:<本地分支名>`                  |                                                              |
+|                                                              |                                                              |
+| **2、将远程指定分支 拉取到 本地当前分支上：**                |                                                              |
+| `git pull origin <远程分支名>`                               |                                                              |
+| `git pull origin master`<br />等价于<br />1. `git fetch origin master`<br />2. `git merge FETCH_HEAD` | 1. `fetch` 当前分支<br />2. `merge` 当前分支                 |
+|                                                              |                                                              |
+| **3、将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支)** | [参考](https://blog.csdn.net/weixin_37646636/article/details/129792724) |
+| `git pull`<br />等价于<br />1. `git fetch`<br />2. `git merge FETCH_HEAD` | 1. `fetch` origin的所有分支<br />2. `merge` 当前分支         |
+
+
 
 # **8. Cherry-pick**
 
@@ -285,42 +293,58 @@
 
 # **9. Push**
 
-| **命令**                                                     | **作用**                                                     | **延展阅读**                                                 |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `git push --set-upstream origin release`<br /><br />`==`<br /><br />**`git push -u origin release`** 为缩写版本<br /> | 1. `.git/config`配置文件会追加如下关联关系，<br />[branch "release"]<br/>	remote = origin<br/>	merge = refs/heads/release<br />故后续可以直接执行`git push`<br /><br />2. `.git\refs\remotes\origin` 里会追加文件`release` | [链接](https://blog.csdn.net/yzpbright/article/details/115574130)<br />自证 |
-|                                                              |                                                              |                                                              |
-| 1. **`git branch --set-upstream-to=origin/release2 release3`**<br /><br />2. **`git push origin HEAD:release2`** | `本地release3分支`和远程`origin/release2分支`建立关联<br />`branch 'release3' set up to track 'origin/release2'.`<br /><br />`.git/config` 新增关系<br />[branch "release3"]<br/>	remote = origin<br/>	merge = refs/heads/release2<br /><br />分支名不同时push代码的方式 | 自证                                                         |
-|                                                              |                                                              |                                                              |
-| `git push`                                                   | `本地分支`和`远程分支`建立起联系后，<br />就可以用 `git push` 直接推送代码；<br /><br />关联关系体现在 ☞ `.git/config` 里有关联关系<br />[branch "release"]<br/>	remote = origin<br/>	merge = refs/heads/release | 自整                                                         |
-|                                                              |                                                              |                                                              |
-| `git push origin release`                                    | 1. `本地release`和`远程release`满足`fast-forward`则可以合入<br />2. `本地release`和`远程release`不满足`fast-forward`则被报错拦截<br />3. `.git/config`中未追加关联关系也可执行此操作；<br />4. `.git\refs\remotes\origin` 里会追加文件 `release` | [链接](https://www.jianshu.com/p/740b219c6546)<br />自证     |
-|                                                              |                                                              |                                                              |
-| `git push` 和`git push origin release ` 区别                 | 1. 当只关联一个远程，只有一个分支时，这两个命令没什么区别。<br />2. 当关联了两个多个仓库、有多个分支时，`git push`可能会报错，<br />因为它不知道要上传代码到哪里去；<br />而`git push origin master`指定仓库和分支，就不会报错。 |                                                              |
-|                                                              |                                                              |                                                              |
-| `git push origin release --force`                            | 强制推送，内容起到置换效果，慎用                             | 自证                                                         |
-|                                                              |                                                              |                                                              |
-| `git push origin --all`                                      | 将本地`所有分支`都推送给`特定的远程仓库`                     |                                                              |
-| `git push origin --tags`                                     | 当使用`--all`选项推送所有本地分支时，<br />`tags`并不会被自动推送到远程仓库。<br />故使用`--tags`选项来向远程仓库推送所有`本地tags`. |                                                              |
+| 1、将本地当前分支 推送到 远程指定分支上（注意：pull是远程在前本地在后，push相反）： |                                                              |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| `git push origin <本地分支名>:<远程分支名>`                  |                                                              |
+|                                                              |                                                              |
+| **2、将本地当前分支 推送到 与本地当前分支同名的远程分支上（注意：pull是远程在前本地在后，push相反）：**[参考](https://www.jianshu.com/p/740b219c6546) |                                                              |
+| `git push origin <本地分支名>`                               | `git push origin release`<br />1. `本地release`和`远程release`满足`fast-forward`则可以合入<br />2. `本地release`和`远程release`不满足`fast-forward`则被报错拦截<br />3. `.git/config`中未追加关联关系也可执行此操作；<br />4. `.git\refs\remotes\origin` 里会追加文件 `release` |
+|                                                              |                                                              |
+|                                                              |                                                              |
+| **3、将本地当前分支 推送到 与本地当前分支同名的远程分支上（需先关联远程分支）：** |                                                              |
+| `git push`                                                   | `本地分支`和`远程分支`建立起联系后，<br />就可以用 `git push` 直接推送代码；<br /><br />关联关系体现在 ☞ `.git/config` 里有关联关系<br />[branch "release"]<br/>	remote = origin<br/>	merge = refs/heads/release |
+
+
+
+| **将本地分支与远程同名分支相关联**                           | [参考](https://blog.csdn.net/yzpbright/article/details/115574130) |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| `git push --set-upstream origin <本地分支名>`                |                                                              |
+|                                                              |                                                              |
+| **`git push --set-upstream origin release`<br /><br />`==`<br /><br />`git push -u origin release` 为缩写版本<br />** | 1. `.git/config`配置文件会追加如下关联关系，<br />[branch "release"]<br/>	remote = origin<br/>	merge = refs/heads/release<br />故后续可以直接执行`git push`<br /><br />2. `.git\refs\remotes\origin` 里会追加文件`release` |
+| 1. **`git branch --set-upstream-to=origin/release2 release3`**<br /><br />2. **`git push origin HEAD:release2`** | `本地release3分支`和远程`origin/release2分支`建立关联<br />`branch 'release3' set up to track 'origin/release2'.`<br /><br />`.git/config` 新增关系<br />[branch "release3"]<br/>	remote = origin<br/>	merge = refs/heads/release2<br /><br />分支名不同名时push代码的方式 |
+
+| `git push` 和`git push origin release ` 区别                 |
+| :----------------------------------------------------------- |
+| 1. 当只关联一个远程，只有一个分支时，这两个命令没什么区别。<br />2. 当关联了两个多个仓库、有多个分支时，`git push`可能会报错，因为它不知道要上传代码到哪里去；而`git push origin master`指定仓库和分支，就不会报错。 |
+
+
+
+| **命令**                          | **作用**                                                     |
+| :-------------------------------- | :----------------------------------------------------------- |
+| `git push origin release --force` | 强制推送，内容起到置换效果，慎用                             |
+|                                   |                                                              |
+| `git push origin --all`           | 将本地`所有分支`都推送给`特定的远程仓库`                     |
+| `git push origin --tags`          | 当使用`--all`选项推送所有本地分支时，<br />`tags`并不会被自动推送到远程仓库。<br />故使用`--tags`选项来向远程仓库推送所有`本地tags`. |
 
 ### **场景1：一套向 中心仓库 发布 本地仓库变更 的标准流程**
 
-| **命令**                                                     | **作用**                                                     | **延展阅读**                                       |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :------------------------------------------------- |
-| 1. `git checkout dev` <br />2. `git fetch origin main` <br />3. `git rebase -i origin/main` <br />4. # Squash commits, fix up commit messages etc. <br />5. `git push origin dev` | 1. 切到`本地dev分支`;<br />2. 通过`git fetch`同步`中心仓库main分支`在本地的副本，以确保本地副本是最新的;<br />3. 通过`git rebase`操作将分支的修改`变基`到`远程main分支`的`提交历史之上`;<br />(`-i` 表可交互的`rebase`操作，<br />同时也是在分享给其他团队成员之前，清理本地commit记录的好机会)<br />5. `git push`命令将`本地dev分支`发送`中心仓库`；<br />(由于已确保本地的`main`分支是最新版本的，因此`push`操作是能够快速前进的。此时git不会阻止`push`操作) | **[链接](https://www.jianshu.com/p/740b219c6546)** |
+| **命令**    **[参考](https://www.jianshu.com/p/740b219c6546)** | **作用**                                                     |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| 1. `git checkout dev` <br />2. `git fetch origin main` <br />3. `git rebase -i origin/main` <br />4. # Squash commits, fix up commit messages etc. <br />5. `git push origin dev` | 1. 切到`本地dev分支`;<br />2. 通过`git fetch`同步`中心仓库main分支`在本地的副本，以确保本地副本是最新的;<br />3. 通过`git rebase`操作将分支的修改`变基`到`远程main分支`的`提交历史之上`;<br />(`-i` 表可交互的`rebase`操作，<br />同时也是在分享给其他团队成员之前，清理本地commit记录的好机会)<br />5. `git push`命令将`本地dev分支`发送`中心仓库`；<br />(由于已确保本地的`main`分支是最新版本的，因此`push`操作是能够快速前进的。此时git不会阻止`push`操作) |
 
 ### **场景2：--amend  提交**
 
-| 命令                                                         | 作用                                                         | 延展阅读                                       |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :--------------------------------------------- |
-| 1. make changes to a repo and git add <br /><br />2. `git commit --amend` <br /><br />3. update the existing commit message <br /><br />4. push<br />方式1：`git push --force origin main`<br />方式2：`git push -f` | amend提交通常会`修正并更新commit message`，`或者增加新的修改`<br /><br />一旦一次commit被修正之后，`git push`会 直接失败，<br />因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。<br /><br />修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 | [链接](https://www.jianshu.com/p/740b219c6546) |
+| 命令   [参考](https://www.jianshu.com/p/740b219c6546)        | 作用                                                         |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| 1. make changes to a repo and git add <br /><br />2. `git commit --amend` <br /><br />3. update the existing commit message <br /><br />4. push<br />方式1：`git push --force origin main`<br />方式2：`git push -f` | amend提交通常会`修正并更新commit message`，`或者增加新的修改`<br /><br />一旦一次commit被修正之后，`git push`会 直接失败，<br />因为Git认为修正之后的`commit`与`远程仓库的commit`发生了偏离。<br /><br />修正之后的`commit`需要使用`--force`选项才能推送到远程仓库 |
 
 ### **场景3：`本地分支`和`远程分支`恰巧重名时 如何push?**
 
-| **命令**                                                     | **作用**                                                     | **延展阅读** |
-| :----------------------------------------------------------- | :----------------------------------------------------------- | :----------- |
-| 1. 本地新建`test4`分支，远程仓库没有重名分支<br /><br />2. `git checkout -b test4`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 代码会被成功 `push` 到远程仓库<br />2. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />3. `.git\refs\remotes\origin` 里会追加文件 `test4` | 自证         |
-|                                                              |                                                              |              |
-| 1. 远程仓库有`test6`分支，本地有`test6`，他们没有关联关系，恰巧重名时<br /><br />2. `git checkout test6`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 满足`fast-forward`则可以合入<br />2. 不满足`fast-forward`则被报错拦截<br />3. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />4. `.git\refs\remotes\origin` 里会追加文件 `test4` | **自证**     |
+| **命令**                                                     | **作用**                                                     |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| 1. 本地新建`test4`分支，远程仓库没有重名分支<br /><br />2. `git checkout -b test4`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 代码会被成功 `push` 到远程仓库<br />2. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />3. `.git\refs\remotes\origin` 里会追加文件 `test4` |
+|                                                              |                                                              |
+| 1. 远程仓库有`test6`分支，本地有`test6`，他们没有关联关系，恰巧重名时<br /><br />2. `git checkout test6`<br />3. `date >> 1.txt && git add . && git commit -m "msg"`<br />4. `git push origin test4` | 1. 满足`fast-forward`则可以合入<br />2. 不满足`fast-forward`则被报错拦截<br />3. `.git/config`配置文件未追加关联关系 `[branch "test4"]`，故此分支依旧不可以直接执行`git push`<br />4. `.git\refs\remotes\origin` 里会追加文件 `test4` |
 
 # **10. log**
 
